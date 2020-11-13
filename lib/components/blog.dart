@@ -5,7 +5,8 @@ import 'package:minimal/components/color.dart';
 import 'package:minimal/components/spacing.dart';
 import 'package:minimal/components/text.dart';
 import 'package:minimal/components/typography.dart';
-import 'package:minimal/routes.dart';
+import 'package:minimal/screens/home_screen.dart';
+import 'package:minimal/screens/stories_screen.dart';
 
 class ImageWrapper extends StatelessWidget {
   final String image;
@@ -245,13 +246,18 @@ class Footer extends StatelessWidget {
 }
 
 class ListItem extends StatelessWidget {
-  // TODO replace with Post item model.
   final String imageUrl;
   final String title;
   final String description;
+  final Function
+      onButtonPressed; // Leave empty if you don't want a button to show up
 
   const ListItem(
-      {Key key, this.imageUrl, @required this.title, this.description})
+      {Key key,
+      this.imageUrl,
+      @required this.title,
+      this.description,
+      this.onButtonPressed})
       : super(key: key);
 
   @override
@@ -285,15 +291,17 @@ class ListItem extends StatelessWidget {
               ),
             ),
           ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Container(
-            margin: marginBottom24,
-            child: ReadMoreButton(
-              onPressed: () => Navigator.pushNamed(context, Routes.post),
-            ),
-          ),
-        ),
+        (onButtonPressed != null)
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  margin: marginBottom24,
+                  child: ReadMoreButton(
+                    onPressed: onButtonPressed,
+                  ),
+                ),
+              )
+            : Container(),
       ],
     );
   }
@@ -320,7 +328,7 @@ class MenuBar extends StatelessWidget {
               GestureDetector(
                 onTap: () => Navigator.popUntil(
                     context, ModalRoute.withName(Navigator.defaultRouteName)),
-                child: Text("MINIMAL",
+                child: Text("TYLER HAUTH",
                     style: GoogleFonts.montserrat(
                         color: textPrimary,
                         fontSize: 30,
@@ -333,8 +341,8 @@ class MenuBar extends StatelessWidget {
                   child: Wrap(
                     children: <Widget>[
                       FlatButton(
-                        onPressed: () => Navigator.popUntil(context,
-                            ModalRoute.withName(Navigator.defaultRouteName)),
+                        onPressed: () => Navigator.popUntil(
+                            context, ModalRoute.withName(HomeScreen.id)),
                         child: Text(
                           "HOME",
                           style: buttonTextStyle,
@@ -344,7 +352,12 @@ class MenuBar extends StatelessWidget {
                         highlightColor: Colors.transparent,
                       ),
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (ModalRoute.of(context).settings.name !=
+                              StoriesScreen.id) {
+                            Navigator.pushNamed(context, StoriesScreen.id);
+                          }
+                        },
                         child: Text(
                           "PORTFOLIO",
                           style: buttonTextStyle,
@@ -354,10 +367,9 @@ class MenuBar extends StatelessWidget {
                         highlightColor: Colors.transparent,
                       ),
                       FlatButton(
-                        onPressed: () =>
-                            Navigator.pushNamed(context, Routes.style),
+                        onPressed: () {},
                         child: Text(
-                          "STYLE",
+                          "BLOG",
                           style: buttonTextStyle,
                         ),
                         splashColor: Colors.transparent,
