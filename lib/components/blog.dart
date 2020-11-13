@@ -5,6 +5,8 @@ import 'package:minimal/components/color.dart';
 import 'package:minimal/components/spacing.dart';
 import 'package:minimal/components/text.dart';
 import 'package:minimal/components/typography.dart';
+import 'package:minimal/screens/about_screen.dart';
+import 'package:minimal/screens/contact_screen.dart';
 import 'package:minimal/screens/home_screen.dart';
 import 'package:minimal/screens/stories_screen.dart';
 
@@ -161,7 +163,6 @@ List<Widget> authorSection({String imageUrl, String name, String bio}) {
         ],
       ),
     ),
-    divider,
   ];
 }
 
@@ -327,7 +328,7 @@ class MenuBar extends StatelessWidget {
             children: <Widget>[
               GestureDetector(
                 onTap: () => Navigator.popUntil(
-                    context, ModalRoute.withName(Navigator.defaultRouteName)),
+                    context, ModalRoute.withName(HomeScreen.id)),
                 child: Text("TYLER HAUTH",
                     style: GoogleFonts.montserrat(
                         color: textPrimary,
@@ -377,7 +378,12 @@ class MenuBar extends StatelessWidget {
                         highlightColor: Colors.transparent,
                       ),
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (ModalRoute.of(context).settings.name !=
+                              AboutScreen.id) {
+                            Navigator.pushNamed(context, AboutScreen.id);
+                          }
+                        },
                         child: Text(
                           "ABOUT",
                           style: buttonTextStyle,
@@ -387,7 +393,12 @@ class MenuBar extends StatelessWidget {
                         highlightColor: Colors.transparent,
                       ),
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (ModalRoute.of(context).settings.name !=
+                              ContactScreen.id) {
+                            Navigator.pushNamed(context, ContactScreen.id);
+                          }
+                        },
                         child: Text(
                           "CONTACT",
                           style: buttonTextStyle,

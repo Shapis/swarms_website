@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:minimal/content/stories_screen_list.dart';
+import 'package:minimal/models/stories_screen_list.dart';
 import 'package:minimal/screens/base_screen.dart';
 
 class StoriesScreen extends StatelessWidget {

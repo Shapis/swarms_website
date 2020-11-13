@@ -8,7 +8,7 @@ class BaseScreen extends StatelessWidget {
 
   List<Widget> getList() {
     List<Widget> startOfList = [MenuBar()];
-    List<Widget> endOfList = [Footer()];
+    List<Widget> endOfList = [divider, Footer()];
 
     return (child != null)
         ? startOfList + child + endOfList

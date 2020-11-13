@@ -14,13 +14,24 @@ class StoriesScreenList {
         description: story.description,
         onButtonPressed: (story.storyBody != null)
             ? () {
-                List<Widget> tempList = [
+                List<Widget> startOfTheList = [
                   ImageWrapper(
                     image: story.imageAddress,
                   )
                 ];
+                List<Widget> endOfTheList = [];
 
-                var sumOfLists = tempList + story.storyBody;
+                if (story.authorThoughts != null) {
+                  endOfTheList = [
+                    ...authorSection(
+                        imageUrl: "assets/images/tyler-hauth2.png",
+                        name: "Author Thoughts",
+                        bio: story.authorThoughts),
+                  ];
+                }
+
+                var sumOfLists =
+                    startOfTheList + story.storyBody + endOfTheList;
 
                 Navigator.pushNamed(context, PostScreen.id,
                     arguments: sumOfLists);

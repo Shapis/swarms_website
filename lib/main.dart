@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:minimal/screens/contact_screen.dart';
 import 'package:minimal/screens/post_screen.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'screens/about_screen.dart';
 import 'screens/screens.dart';
 import 'screens/stories_screen.dart';
 
@@ -30,6 +32,8 @@ class MyApp extends StatelessWidget {
         HomeScreen.id: (context) => HomeScreen(),
         StoriesScreen.id: (context) => StoriesScreen(),
         PostScreen.id: (context) => PostScreen(),
+        AboutScreen.id: (context) => AboutScreen(),
+        ContactScreen.id: (context) => ContactScreen(),
       },
       theme: Theme.of(context).copyWith(platform: TargetPlatform.android),
       debugShowCheckedModeBanner: false,
