@@ -119,7 +119,8 @@ Widget dividerSmall = Container(
   ),
 );
 
-List<Widget> authorSection({String imageUrl, String name, String bio}) {
+List<Widget> authorSection(BuildContext context,
+    {String imageUrl, String name, String bio}) {
   return [
     divider,
     Container(
@@ -133,11 +134,16 @@ List<Widget> authorSection({String imageUrl, String name, String bio}) {
                 shape: CircleBorder(),
                 clipBehavior: Clip.hardEdge,
                 color: Colors.transparent,
-                child: Image.asset(
-                  imageUrl,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.contain,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, AboutScreen.id);
+                  },
+                  child: Image.asset(
+                    imageUrl,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),

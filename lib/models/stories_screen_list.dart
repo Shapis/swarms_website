@@ -23,7 +23,7 @@ class StoriesScreenList {
 
                 if (story.authorThoughts != null) {
                   endOfTheList = [
-                    ...authorSection(
+                    ...authorSection(context,
                         imageUrl: "assets/images/tyler-hauth2.png",
                         name: "Author Thoughts",
                         bio: story.authorThoughts),
