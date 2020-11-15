@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:minimal/screens/base_screen.dart';
+import 'package:minimal/services/mailing_service.dart';
 
 class ContactScreen extends StatefulWidget {
   static const String id = 'contact_screen';
@@ -135,9 +136,16 @@ class _ContactScreenState extends State<ContactScreen> {
                     setState(() {
                       _submitWasPressed = true;
                     });
-
-                    print(_formKeyTop.currentState.validate() &&
-                        _formKeyBottom.currentState.validate());
+                    if (_formKeyTop.currentState.validate() &&
+                        _formKeyBottom.currentState.validate()) {
+                      print('attempting to send email');
+                      MailingHelper(
+                        name: _name,
+                        email: _email,
+                        phoneNumber: _phoneNumber,
+                        textBody: _textBody,
+                      ).sendMail();
+                    }
                   },
                 ),
               ),
