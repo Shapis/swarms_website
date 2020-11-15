@@ -13,10 +13,18 @@ class ContactScreen extends StatefulWidget {
 
 class _ContactScreenState extends State<ContactScreen> {
   final Widget sizedBox = SizedBox(height: 30);
+
+  final _requiredValidator =
+      RequiredValidator(errorText: 'this field is required');
+
   final _UsNumberTextInputFormatter _phoneNumberFormatter =
       _UsNumberTextInputFormatter();
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyTop = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyBottom = GlobalKey<FormState>();
+
+  bool _submitWasPressed = false;
+  bool _isCountryCodeUS = true;
 
   String _name;
   String _email;
@@ -28,12 +36,14 @@ class _ContactScreenState extends State<ContactScreen> {
     return BaseScreen(
       child: [
         Form(
-          key: _formKey,
+          key: _formKeyTop,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                autovalidateMode: AutovalidateMode.always,
+                autovalidateMode: _submitWasPressed
+                    ? AutovalidateMode.always
+                    : AutovalidateMode.disabled,
                 decoration: InputDecoration(
                   filled: true,
                   icon: const Icon(Icons.person),
@@ -44,12 +54,13 @@ class _ContactScreenState extends State<ContactScreen> {
                 onChanged: (value) {
                   _name = value;
                 },
-                validator:
-                    RequiredValidator(errorText: 'this field is required'),
+                validator: _requiredValidator,
               ),
               sizedBox,
               TextFormField(
-                autovalidateMode: AutovalidateMode.always,
+                autovalidateMode: _submitWasPressed
+                    ? AutovalidateMode.always
+                    : AutovalidateMode.disabled,
                 decoration: InputDecoration(
                   filled: true,
                   icon: const Icon(Icons.email),
@@ -65,22 +76,44 @@ class _ContactScreenState extends State<ContactScreen> {
                 //validator: validators.isEmail,
               ),
               sizedBox,
-              IntlPhoneField(
-                //autoValidate: true,
-                decoration: InputDecoration(
-                  filled: true,
-                  hintText: 'Where can I reach you?',
-                  labelText: 'Phone number',
-                ),
-                onChanged: (value) {
-                  _phoneNumber = value.completeNumber;
-                },
-              ),
+            ],
+          ),
+        ),
+        IntlPhoneField(
+          maxLength: _isCountryCodeUS ? 14 : null,
+          initialCountryCode: 'US',
+          decoration: InputDecoration(
+            filled: true,
+            hintText: 'Where can I reach you?',
+            labelText: 'Phone number',
+          ),
+          onChanged: (value) {
+            _phoneNumber = value.completeNumber;
+            setState(() {
+              _isCountryCodeUS = (value.countryISOCode == 'US');
+            });
+          },
+
+          // TextInputFormatters are applied in sequence.
+          inputFormatters: _isCountryCodeUS
+              ? <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly,
+                  // Fit the validating format.
+                  _phoneNumberFormatter,
+                ]
+              : null,
+        ),
+        Form(
+          key: _formKeyBottom,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               sizedBox,
               TextFormField(
-                autovalidateMode: AutovalidateMode.always,
-                validator:
-                    RequiredValidator(errorText: 'this field is required'),
+                autovalidateMode: _submitWasPressed
+                    ? AutovalidateMode.always
+                    : AutovalidateMode.disabled,
+                validator: _requiredValidator,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText:
@@ -97,8 +130,14 @@ class _ContactScreenState extends State<ContactScreen> {
               Center(
                 child: RaisedButton(
                   child: Text('SUBMIT'),
+                  color: Colors.lightBlueAccent,
                   onPressed: () {
-                    print(_formKey.currentState.validate());
+                    setState(() {
+                      _submitWasPressed = true;
+                    });
+
+                    print(_formKeyTop.currentState.validate() &&
+                        _formKeyBottom.currentState.validate());
                   },
                 ),
               ),
