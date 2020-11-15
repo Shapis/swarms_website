@@ -1,3 +1,4 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -23,9 +24,11 @@ class _ContactScreenState extends State<ContactScreen> {
 
   final GlobalKey<FormState> _formKeyTop = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKeyBottom = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyPhone = GlobalKey<FormState>();
 
   bool _submitWasPressed = false;
   bool _isCountryCodeUS = true;
+  bool _isSendingEmail = false;
 
   String _name;
   String _email;
@@ -80,29 +83,32 @@ class _ContactScreenState extends State<ContactScreen> {
             ],
           ),
         ),
-        IntlPhoneField(
-          maxLength: _isCountryCodeUS ? 14 : null,
-          initialCountryCode: 'US',
-          decoration: InputDecoration(
-            filled: true,
-            hintText: 'Where can I reach you?',
-            labelText: 'Phone number',
-          ),
-          onChanged: (value) {
-            _phoneNumber = value.completeNumber;
-            setState(() {
-              _isCountryCodeUS = (value.countryISOCode == 'US');
-            });
-          },
+        Form(
+          key: _formKeyPhone,
+          child: IntlPhoneField(
+            maxLength: _isCountryCodeUS ? 14 : null,
+            initialCountryCode: 'US',
+            decoration: InputDecoration(
+              filled: true,
+              hintText: 'Where can I reach you?',
+              labelText: 'Phone number',
+            ),
+            onChanged: (value) {
+              _phoneNumber = value.completeNumber;
+              setState(() {
+                _isCountryCodeUS = (value.countryISOCode == 'US');
+              });
+            },
 
-          // TextInputFormatters are applied in sequence.
-          inputFormatters: _isCountryCodeUS
-              ? <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly,
-                  // Fit the validating format.
-                  _phoneNumberFormatter,
-                ]
-              : null,
+            // TextInputFormatters are applied in sequence.
+            inputFormatters: _isCountryCodeUS
+                ? <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                    // Fit the validating format.
+                    _phoneNumberFormatter,
+                  ]
+                : null,
+          ),
         ),
         Form(
           key: _formKeyBottom,
@@ -129,25 +135,58 @@ class _ContactScreenState extends State<ContactScreen> {
               ),
               sizedBox,
               Center(
-                child: RaisedButton(
-                  child: Text('SUBMIT'),
-                  color: Colors.lightBlueAccent,
-                  onPressed: () {
-                    setState(() {
-                      _submitWasPressed = true;
-                    });
-                    if (_formKeyTop.currentState.validate() &&
-                        _formKeyBottom.currentState.validate()) {
-                      print('attempting to send email');
-                      MailingHelper(
-                        name: _name,
-                        email: _email,
-                        phoneNumber: _phoneNumber,
-                        textBody: _textBody,
-                      ).sendMail();
-                    }
-                  },
-                ),
+                child: _isSendingEmail
+                    ? Container(
+                        child: CircularProgressIndicator(),
+                      )
+                    : RaisedButton(
+                        child: Text('SUBMIT'),
+                        color: Colors.lightBlueAccent,
+                        onPressed: () async {
+                          setState(() {
+                            _submitWasPressed = true;
+                          });
+
+                          if (_formKeyTop.currentState.validate() &&
+                              _formKeyBottom.currentState.validate()) {
+                            setState(() {
+                              _isSendingEmail = true;
+                            });
+                            print('attempting to send email');
+                            bool _wasSucessful = await MailingHelper(
+                              name: _name,
+                              email: _email,
+                              phoneNumber: _phoneNumber,
+                              textBody: _textBody,
+                            ).sendMail();
+                            // bool _wasSucessful = await Future.delayed(
+                            //     const Duration(seconds: 1), () {
+                            //   return false;
+                            // });
+
+                            if (_wasSucessful) {
+                              showOkAlertDialog(
+                                  context: context,
+                                  title: 'Message sent sucessfully!',
+                                  message: 'We\'ll be in touch!');
+                              _formKeyBottom.currentState.reset();
+                              _formKeyTop.currentState.reset();
+                              _formKeyPhone.currentState.reset();
+                              _submitWasPressed = false;
+                            } else {
+                              showOkAlertDialog(
+                                  context: context,
+                                  title: 'Oh no! Something went wrong!',
+                                  message:
+                                      'The message wasn\'t sent! Worry not, you can still reach me at twhauthor@gmail.com! Sorry about that!');
+                            }
+
+                            setState(() {
+                              _isSendingEmail = false;
+                            });
+                          }
+                        },
+                      ),
               ),
               sizedBox,
               Text(

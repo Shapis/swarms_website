@@ -19,6 +19,7 @@ dependencies:
   intl_phone_field: ^1.4.2
   form_field_validator: ^1.0.1
   mailer: ^2.0.2
+  adaptive_dialog: ^0.9.0+1
 
 dev_dependencies:
   flutter_test:
