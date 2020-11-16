@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:minimal/components/blog.dart';
+import 'package:minimal/content/blog_data.dart';
 import 'package:minimal/content/stories_data.dart';
 import 'package:minimal/screens/post_screen.dart';
 
-class StoriesScreenList {
-  List<Widget> getStoriesList(BuildContext context) {
-    List<Widget> storiesScreen = [];
-    for (var story in StoriesData().myList) {
-      storiesScreen.add(ListItem(
-        imageUrl: story.imageAddress,
-        title: story.title,
-        description: story.description,
-        onButtonPressed: (story.storyBody != null)
+class BlogScreenList {
+  List<Widget> getBlogList(BuildContext context) {
+    List<Widget> blogScreen = [];
+    for (var blog in BlogData().myList) {
+      blogScreen.add(ListItem(
+        imageUrl: blog.imageAddress,
+        title: blog.title,
+        description: blog.description,
+        onButtonPressed: (blog.blogBody != null)
             ? () {
                 List<Widget> startOfTheList = [
                   ImageWrapper(
-                    image: story.imageAddress,
+                    image: blog.imageAddress,
                   )
                 ];
                 List<Widget> endOfTheList = [];
 
-                if (story.authorThoughts != null) {
+                if (blog.authorThoughts != null) {
                   endOfTheList = [
                     ...authorSection(context,
                         imageUrl: "assets/images/tyler-hauth2.png",
                         name: "Author Thoughts",
-                        bio: story.authorThoughts),
+                        bio: blog.authorThoughts),
                   ];
                 }
 
-                var sumOfLists =
-                    startOfTheList + story.storyBody + endOfTheList;
+                var sumOfLists = startOfTheList + blog.blogBody + endOfTheList;
 
                 Navigator.pushNamed(context, PostScreen.id,
                     arguments: sumOfLists);
@@ -38,6 +38,6 @@ class StoriesScreenList {
             : null,
       ));
     }
-    return storiesScreen;
+    return blogScreen;
   }
 }

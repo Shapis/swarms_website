@@ -6,6 +6,7 @@ import 'package:minimal/components/spacing.dart';
 import 'package:minimal/components/text.dart';
 import 'package:minimal/components/typography.dart';
 import 'package:minimal/screens/about_screen.dart';
+import 'package:minimal/screens/blog_screen.dart';
 import 'package:minimal/screens/contact_screen.dart';
 import 'package:minimal/screens/home_screen.dart';
 import 'package:minimal/screens/stories_screen.dart';
@@ -374,7 +375,12 @@ class MenuBar extends StatelessWidget {
                         highlightColor: Colors.transparent,
                       ),
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (ModalRoute.of(context).settings.name !=
+                              BlogScreen.id) {
+                            Navigator.pushNamed(context, BlogScreen.id);
+                          }
+                        },
                         child: Text(
                           "BLOG",
                           style: buttonTextStyle,
